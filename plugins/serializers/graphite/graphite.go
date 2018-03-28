@@ -35,7 +35,7 @@ func (s *GraphiteSerializer) Serialize(metric telegraf.Metric) ([]byte, error) {
 	out := []byte{}
 
 	// Convert UnixNano to Unix timestamps
-	timestamp := metric.UnixNano() / 1000000000
+	timestamp := metric.Time().UnixNano() / 1000000000
 
 	bucket := SerializeBucketName(metric.Name(), metric.Tags(), s.Template, s.Prefix)
 	if bucket == "" {
@@ -133,7 +133,7 @@ func InsertField(bucket, fieldName string) string {
 	if fieldName == "value" {
 		return fieldDeleter.Replace(bucket)
 	}
-	return strings.Replace(bucket, "FIELDNAME", strings.Replace(fieldName, ".", "_", -1), 1)
+	return strings.Replace(bucket, "FIELDNAME", fieldName, 1)
 }
 
 func buildTags(tags map[string]string) string {
